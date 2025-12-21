@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>siteA</title>
+    <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.8/dist/web/static/pretendard.css" />
+    <style>
+        :root {
+            --brand-color: #0f766e;
+            --brand-dark: #0d5e58;
+            --brand-light: #f0fdfa;
+            --text-dark: #111827;
+            --text-gray: #6b7280;
+            --border: #e5e7eb;
+            --bg-gray: #f9fafb;
+            --danger: #ef4444;
+            --active-shadow: 0 10px 15px -3px rgba(15, 118, 110, 0.1), 0 4px 6px -2px rgba(15, 118, 110, 0.05);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { 
+            font-family: 'Pretendard', sans-serif; 
+            color: var(--text-dark); 
+            background: #fff;
+            line-height: 1.5;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .hidden { display: none !important; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+
+        /* --- Header --- */
+        header {
+            border-bottom: 1px solid var(--border);
+            padding: 15px 0;
+            background: #fff;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo { 
+            font-size: 22px; 
+            font-weight: 800; 
+            color: var(--brand-color); 
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .nav-links { display: flex; gap: 30px; font-size: 14px; font-weight: 600; color: var(--text-gray); }
+        .nav-links div { cursor: pointer; user-select: none; }
+        .nav-links div.active { color: var(--brand-color); }
+
+        /* --- Main Content --- */
+        .main-content { padding: 40px 0; }
+        .product-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: start;
+        }
+
+        .product-image-area img {
+            width: 100%;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        }
+
+        /* --- Info Area --- */
+        .badge-group { display: flex; gap: 6px; margin-bottom: 12px; }
+        .badge {
+            font-size: 11px;
+            font-weight: 800;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        .badge-black { background: #1f2937; color: #fff; }
+        .badge-gray { background: #f3f4f6; color: #6b7280; }
+
+        .product-title { font-size: 32px; font-weight: 800; margin-bottom: 8px; letter-spacing: -1px; }
+        .rating { display: flex; align-items: center; gap: 4px; font-size: 14px; margin-bottom: 24px; }
+        .rating .stars { color: #fbbf24; }
+
+        .delivery-notice {
+            background: var(--bg-gray);
+            padding: 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        .delivery-notice b { color: var(--brand-color); }
+
+        /* --- 3 Options Area --- */
+        .options-section { margin-top: 40px; }
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .opt-card {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px 16px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 180px;
+            user-select: none;
+        }
+
+        .badge-rec {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ccfbf1;
+            color: var(--brand-color);
+            font-size: 10px;
+            font-weight: 800;
+            padding: 2px 10px;
+            border-radius: 20px;
+            border: 1px solid var(--brand-color);
+            white-space: nowrap;
+        }
+
+        .opt-card.selected {
+            border: 2px solid var(--brand-color);
+            background: var(--brand-light);
+            box-shadow: var(--active-shadow);
+            transform: translateY(-2px);
+        }
+
+        .opt-card .check-mark {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #fff;
+            color: transparent;
+            font-size: 12px;
+            font-weight: 900;
+        }
+
+        .opt-card.selected .check-mark {
+            background: var(--brand-color);
+            border-color: var(--brand-color);
+            color: #fff;
+        }
+
+        .opt-card h4 { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+        .opt-card .price { font-size: 19px; font-weight: 800; }
+        .opt-card .sub-text { font-size: 12px; color: var(--text-gray); margin-top: 10px; line-height: 1.4; }
+        
+        /* 해지 가능 강조 텍스트 */
+        .cancel-hint { color: var(--danger); font-weight: 700; }
+
+        .btn-buy {
+            width: 100%;
+            background: var(--brand-color);
+            color: #fff;
+            padding: 18px;
+            border-radius: 8px;
+            font-size: 17px;
+            font-weight: 700;
+            border: none;
+            transition: background 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(15, 118, 110, 0.2);
+            cursor: pointer;
+        }
+        .btn-buy:hover { background: var(--brand-dark); }
+
+        /* --- My Page --- */
+        #page-mypage { padding: 60px 0; }
+        .mypage-header { font-size: 24px; font-weight: 800; margin-bottom: 30px; }
+        
+        .subscription-status {
+            border: 1px solid var(--border);
+            padding: 30px;
+            border-radius: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #fff;
+        }
+        .status-info h3 { font-size: 19px; font-weight: 700; margin-bottom: 6px; }
+        .status-info p { color: var(--text-gray); font-size: 14px; }
+
+        .btn-cancel {
+            background: #fff;
+            border: 1px solid var(--border);
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-gray);
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .btn-cancel:hover { background: #fef2f2; color: #ef4444; border-color: #fecaca; }
+
+        /* --- Dialog --- */
+        .dialog-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.4);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(2px);
+        }
+        .dialog {
+            background: #fff;
+            padding: 32px;
+            border-radius: 16px;
+            width: 380px;
+            text-align: center;
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+        }
+        .dialog h3 { font-size: 18px; font-weight: 700; margin-bottom: 12px; }
+        .dialog p { font-size: 14px; color: var(--text-gray); margin-bottom: 24px; line-height: 1.5; }
+        .dialog-btns { display: flex; gap: 10px; }
+        .dialog-btns button { flex: 1; padding: 12px; border-radius: 8px; font-weight: 600; font-size: 14px; cursor: pointer; }
+        .btn-confirm { background: var(--brand-color); color: #fff; border: none; }
+        .btn-close { background: var(--bg-gray); color: var(--text-dark); border: none; }
+
+        /* --- Toast --- */
+        #toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #111827;
+            color: #fff;
+            padding: 14px 28px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 2000;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.2);
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container header-inner">
+            <div class="logo" onclick="showPage('main')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" style="color:var(--brand-color)"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+                siteA
+            </div>
+            <div class="nav-links">
+                <div class="active" onclick="showPage('main')">전체 상품</div>
+                <div onclick="showPage('mypage')">마이페이지</div>
+            </div>
+            <div style="width: 24px;"></div>
+        </div>
+    </header>
+
+    <main id="page-main" class="container main-content">
+        <div class="product-grid">
+            <div class="product-image-area">
+                <img src="sample.png" alt="Product" onerror="this.src='https://placehold.co/800x800/f3f4f6/0f766e?text=siteA+Premium+Vitamin'">
+            </div>
+            <div class="product-info-area">
+                <div class="badge-group">
+                    <span class="badge badge-black">BEST</span>
+                    <span class="badge badge-gray">무료배송</span>
+                </div>
+                <h1 class="product-title">퓨어 데일리 멀티 비타민 에센셜 팩 (30일분)</h1>
+                <div class="rating">
+                    <span class="stars">★★★★★</span>
+                    <span class="count">4.9 | 리뷰 2,240개</span>
+                </div>
+
+                <div class="delivery-notice">
+                    🚚 <b>내일 도착 보장</b> (23:59 내 주문 시)
+                </div>
+
+                <p style="color: var(--text-gray); font-size: 15px; margin-bottom: 40px; line-height: 1.7;">
+                    활력을 위한 최적의 배합. 정직하고 투명한 가격으로<br>
+                    건강한 일상을 시작해 보세요.
+                </p>
+
+                <div class="options-section">
+                    <div class="options-grid">
+                        <div class="opt-card" id="opt-1" onclick="selectOption(1)">
+                            <div class="check-mark">✓</div>
+                            <div>
+                                <h4>단일 구매</h4>
+                                <div class="price">22,000원</div>
+                            </div>
+                            <div class="sub-text">1회성 일반 구매<br>추가 가입 없음</div>
+                        </div>
+
+                        <div class="opt-card selected" id="opt-2" onclick="selectOption(2)">
+                            <div class="badge-rec">가장 많이 선택</div>
+                            <div class="check-mark">✓</div>
+                            <div>
+                                <h4>정기 구독</h4>
+                                <div class="price">19,900원</div>
+                            </div>
+                            <div class="sub-text">매월 무료 배송<br><span class="cancel-hint">언제든 해지 가능</span></div>
+                        </div>
+
+                        <div class="opt-card" id="opt-3" onclick="selectOption(3)">
+                            <div class="check-mark">✓</div>
+                            <div>
+                                <h4>연간 구독</h4>
+                                <div class="price">17,500원<small style="font-size:12px;">/월</small></div>
+                            </div>
+                            <div class="sub-text">연간 혜택 통합 적용<br><span class="cancel-hint">언제든 해지 가능</span></div>
+                        </div>
+                    </div>
+
+                    <button class="btn-buy" onclick="handlePurchase()">선택 완료 및 결제</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <main id="page-mypage" class="container hidden">
+        <h2 class="mypage-header">마이페이지</h2>
+        
+        <div id="sub-empty" style="text-align: center; padding: 100px 0; color: var(--text-gray);">
+            현재 이용 중인 구독 서비스가 없습니다.
+        </div>
+
+        <div id="sub-active" class="hidden">
+            <div class="subscription-status">
+                <div class="status-info">
+                    <p style="color: var(--brand-color); font-weight: 700; font-size: 12px; margin-bottom: 5px;">구독 이용 중</p>
+                    <h3 id="display-plan-name">자동 연장 정기 구독</h3>
+                    <p id="display-plan-price">다음 결제 예정일: 2026년 01월 22일 (19,900원)</p>
+                </div>
+                <button class="btn-cancel" onclick="openCancelConfirm()">구독 해지</button>
+            </div>
+        </div>
+    </main>
+
+    <div id="dialog-overlay" class="dialog-overlay hidden">
+        <div class="dialog">
+            <h3 id="dialog-title">구독을 해지하시겠습니까?</h3>
+            <p id="dialog-desc">해지 시 더 이상 무료 배송 및 할인 혜택을 받으실 수 없습니다. 위약금 없이 즉시 처리됩니다.</p>
+            <div class="dialog-btns">
+                <button class="btn-close" onclick="closeDialog()">닫기</button>
+                <button class="btn-confirm" id="btn-dialog-main" onclick="confirmAction()">해지하기</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast">메시지가 전송되었습니다.</div>
+
+    <script>
+        let currentOption = 2;
+        let isSubscribed = false;
+
+        function selectOption(num) {
+            currentOption = num;
+            document.querySelectorAll('.opt-card').forEach(card => card.classList.remove('selected'));
+            document.getElementById('opt-' + num).classList.add('selected');
+        }
+
+        function showPage(pageId) {
+            document.getElementById('page-main').classList.add('hidden');
+            document.getElementById('page-mypage').classList.add('hidden');
+            document.getElementById('page-' + pageId).classList.remove('hidden');
+
+            document.querySelectorAll('.nav-links div').forEach(el => el.classList.remove('active'));
+            if(pageId === 'main') document.querySelectorAll('.nav-links div')[0].classList.add('active');
+            if(pageId === 'mypage') {
+                document.querySelectorAll('.nav-links div')[1].classList.add('active');
+                updateMypage();
+            }
+        }
+
+        function handlePurchase() {
+            console.log(`[DATA] User selected Option: ${currentOption}`);
+            
+            // 단일 구매(1)일 경우 구독 활성화 안 함
+            if (currentOption === 1) {
+                isSubscribed = false;
+                showToast("단일 구매가 완료되었습니다.");
+            } else {
+                isSubscribed = true;
+                showToast("정기 구독 신청이 완료되었습니다.");
+            }
+            
+            setTimeout(() => showPage('mypage'), 800);
+        }
+
+        function updateMypage() {
+            const empty = document.getElementById('sub-empty');
+            const active = document.getElementById('sub-active');
+            
+            if(isSubscribed) {
+                empty.classList.add('hidden');
+                active.classList.remove('hidden');
+                
+                const nameEl = document.getElementById('display-plan-name');
+                const priceEl = document.getElementById('display-plan-price');
+                
+                if(currentOption === 2) {
+                    nameEl.innerText = "자동 연장 정기 구독";
+                    priceEl.innerText = "다음 결제 예정일: 2026년 01월 22일 (19,900원)";
+                } else if(currentOption === 3) {
+                    nameEl.innerText = "연간 구독 멤버십";
+                    priceEl.innerText = "이용 기간: 2025.12.22 ~ 2026.12.21 (결제 완료)";
+                }
+            } else {
+                empty.classList.remove('hidden');
+                active.classList.add('hidden');
+            }
+        }
+
+        let pendingAction = null;
+        function openCancelConfirm() {
+            document.getElementById('btn-dialog-main').style.background = "#ef4444";
+            document.getElementById('dialog-overlay').classList.remove('hidden');
+            pendingAction = 'cancel';
+        }
+
+        function closeDialog() {
+            document.getElementById('dialog-overlay').classList.add('hidden');
+        }
+
+        function confirmAction() {
+            if(pendingAction === 'cancel') {
+                isSubscribed = false;
+                closeDialog();
+                showToast("해지가 정상적으로 완료되었습니다.");
+                updateMypage();
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.style.opacity = '1';
+            setTimeout(() => { toast.style.opacity = '0'; }, 2000);
+        }
+    </script>
+</body>
+</html>

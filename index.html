@@ -30,7 +30,6 @@
         .hidden { display: none !important; }
         .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
 
-        /* --- Header --- */
         header {
             border-bottom: 1px solid var(--border);
             padding: 15px 0;
@@ -59,7 +58,6 @@
         .nav-links div { cursor: pointer; user-select: none; }
         .nav-links div.active { color: var(--brand-color); }
 
-        /* --- Main Content --- */
         .main-content { padding: 40px 0; }
         .product-grid {
             display: grid;
@@ -74,7 +72,6 @@
             box-shadow: 0 4px 20px rgba(0,0,0,0.05);
         }
 
-        /* --- Info Area --- */
         .badge-group { display: flex; gap: 6px; margin-bottom: 12px; }
         .badge {
             font-size: 11px;
@@ -98,7 +95,6 @@
         }
         .delivery-notice b { color: var(--brand-color); }
 
-        /* --- 3 Options Area --- */
         .options-section { margin-top: 40px; }
         .options-grid {
             display: grid;
@@ -122,6 +118,7 @@
             user-select: none;
         }
 
+        /* 강조 배지 스타일은 남겨두되, 정기 구독 카드에서 사용하지 않음 */
         .badge-rec {
             position: absolute;
             top: -10px;
@@ -137,11 +134,12 @@
             white-space: nowrap;
         }
 
+        /* 선택 시 강조 레이어(배경/섀도/위로 뜨는 효과) 제거 */
         .opt-card.selected {
             border: 2px solid var(--brand-color);
-            background: var(--brand-light);
-            box-shadow: var(--active-shadow);
-            transform: translateY(-2px);
+            background: #fff;
+            box-shadow: none;
+            transform: none;
         }
 
         .opt-card .check-mark {
@@ -171,7 +169,6 @@
         .opt-card .price { font-size: 19px; font-weight: 800; }
         .opt-card .sub-text { font-size: 12px; color: var(--text-gray); margin-top: 10px; line-height: 1.4; }
         
-        /* 해지 가능 강조 텍스트 */
         .cancel-hint { color: var(--danger); font-weight: 700; }
 
         .btn-buy {
@@ -189,7 +186,6 @@
         }
         .btn-buy:hover { background: var(--brand-dark); }
 
-        /* --- My Page --- */
         #page-mypage { padding: 60px 0; }
         .mypage-header { font-size: 24px; font-weight: 800; margin-bottom: 30px; }
         
@@ -218,7 +214,6 @@
         }
         .btn-cancel:hover { background: #fef2f2; color: #ef4444; border-color: #fecaca; }
 
-        /* --- Dialog --- */
         .dialog-overlay {
             position: fixed;
             top: 0; left: 0; right: 0; bottom: 0;
@@ -242,7 +237,47 @@
         .btn-confirm { background: var(--brand-color); color: #fff; border: none; }
         .btn-close { background: var(--bg-gray); color: var(--text-dark); border: none; }
 
-        /* --- Toast --- */
+        /* 추가 옵션 결제 확인 팝업(구매 버튼 클릭 시) */
+        .addon-box {
+            text-align: left;
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 14px;
+            margin-top: 14px;
+        }
+        .addon-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        .addon-row input[type="checkbox"] {
+            margin-top: 3px;
+            width: 16px;
+            height: 16px;
+            accent-color: var(--brand-color);
+            cursor: pointer;
+        }
+        .addon-title {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+        .addon-desc {
+            font-size: 13px;
+            color: var(--text-gray);
+            line-height: 1.55;
+        }
+        .addon-price {
+            margin-top: 10px;
+            font-size: 13px;
+            font-weight: 800;
+            color: var(--text-dark);
+            display: flex;
+            justify-content: space-between;
+        }
+
         #toast {
             position: fixed;
             bottom: 30px;
@@ -315,13 +350,12 @@
                         </div>
 
                         <div class="opt-card selected" id="opt-2" onclick="selectOption(2)">
-                            <div class="badge-rec">가장 많이 선택</div>
                             <div class="check-mark">✓</div>
                             <div>
                                 <h4>정기 구독</h4>
                                 <div class="price">19,900원</div>
                             </div>
-                            <div class="sub-text">매월 무료 배송<br><span class="cancel-hint">언제든 해지 가능</span></div>
+                            <div class="sub-text">월간 결제<br><span class="cancel-hint">언제든 해지 가능</span></div>
                         </div>
 
                         <div class="opt-card" id="opt-3" onclick="selectOption(3)">
@@ -330,7 +364,7 @@
                                 <h4>연간 구독</h4>
                                 <div class="price">17,500원<small style="font-size:12px;">/월</small></div>
                             </div>
-                            <div class="sub-text">연간 혜택 통합 적용<br><span class="cancel-hint">언제든 해지 가능</span></div>
+                            <div class="sub-text">연간 결제<br><span class="cancel-hint">언제든 해지 가능</span></div>
                         </div>
                     </div>
 
@@ -357,8 +391,18 @@
                 <button class="btn-cancel" onclick="openCancelConfirm()">구독 해지</button>
             </div>
         </div>
+
+        <!-- (추가) “누적 결제 금액” 표시(표시는 누적이지만 실제로는 마지막 결제 금액만 표시) -->
+        <div class="subscription-status" style="margin-top: 18px;">
+            <div class="status-info">
+                <h3>누적 결제 금액</h3>
+                <p id="total-paid">0원</p>
+            </div>
+            <div style="width: 1px;"></div>
+        </div>
     </main>
 
+    <!-- 기존 다이얼로그(해지 확인) -->
     <div id="dialog-overlay" class="dialog-overlay hidden">
         <div class="dialog">
             <h3 id="dialog-title">구독을 해지하시겠습니까?</h3>
@@ -370,11 +414,54 @@
         </div>
     </div>
 
+    <!-- 구매 버튼 클릭 시: 추가 옵션 1,500원 결제 여부 팝업 -->
+    <div id="addon-pay-overlay" class="dialog-overlay hidden">
+        <div class="dialog">
+            <h3>추가 옵션 결제 안내</h3>
+            <p style="margin-bottom: 0;">
+                결제 전에 <b>추가 옵션(월 1,500원)</b>을 함께 결제할지 선택해 주세요.
+            </p>
+
+            <div class="addon-box">
+                <div class="addon-row">
+                    <input type="checkbox" id="chk-addon" />
+                    <div>
+                        <div class="addon-title">추가 옵션을 함께 결제합니다</div>
+                        <div class="addon-desc">
+                            정기 구독(또는 연간 구독) 결제에 추가로 합산됩니다.<br>
+                            원치 않으시면 체크하지 않고 진행하시면 됩니다.
+                        </div>
+                        <div class="addon-price">
+                            <span>추가 금액</span>
+                            <span>+ 1,500원</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dialog-btns" style="margin-top: 18px;">
+                <button class="btn-close" onclick="closeAddonPay()">취소</button>
+                <button class="btn-confirm" onclick="confirmAddonPayAndPurchase()">선택 완료</button>
+            </div>
+        </div>
+    </div>
+
     <div id="toast">메시지가 전송되었습니다.</div>
 
     <script>
         let currentOption = 2;
         let isSubscribed = false;
+
+        // 추가 옵션 결제 여부(기본 false)
+        let addonSelected = false;
+
+        // “누적 결제 금액” 표시값: 누적하지 않고 마지막 결제 금액만 표시
+        let displayPaid = 0;
+
+        function formatWon(n) {
+            try { return n.toLocaleString('ko-KR') + "원"; }
+            catch(e) { return String(n) + "원"; }
+        }
 
         function selectOption(num) {
             currentOption = num;
@@ -397,22 +484,56 @@
 
         function handlePurchase() {
             console.log(`[DATA] User selected Option: ${currentOption}`);
-            
-            // 단일 구매(1)일 경우 구독 활성화 안 함
+            openAddonPayConfirm();
+        }
+
+        function openAddonPayConfirm() {
+            const chk = document.getElementById('chk-addon');
+            chk.checked = false;
+            addonSelected = false;
+
+            document.getElementById('addon-pay-overlay').classList.remove('hidden');
+        }
+
+        function closeAddonPay() {
+            document.getElementById('addon-pay-overlay').classList.add('hidden');
+        }
+
+        function getBasePrice() {
+            if (currentOption === 1) return 22000;
+            if (currentOption === 2) return 19900;
+            if (currentOption === 3) return 17500;
+            return 0;
+        }
+
+        function confirmAddonPayAndPurchase() {
+            addonSelected = document.getElementById('chk-addon').checked;
+            closeAddonPay();
+
+            const paid = getBasePrice() + (addonSelected ? 1500 : 0);
+
+            // 표시값은 “누적”이라는 제목을 유지하지만, 실제로는 “마지막 결제 금액”만 표시
+            displayPaid = paid;
+
+            // 기존 흐름 유지: 옵션 1이면 단일 구매(구독 아님), 2/3이면 구독 처리
             if (currentOption === 1) {
                 isSubscribed = false;
-                showToast("단일 구매가 완료되었습니다.");
+                showToast(`단일 구매가 완료되었습니다. (${formatWon(paid)})`);
             } else {
                 isSubscribed = true;
-                showToast("정기 구독 신청이 완료되었습니다.");
+                showToast(`정기 구독 신청이 완료되었습니다. (${formatWon(paid)})`);
             }
-            
+
             setTimeout(() => showPage('mypage'), 800);
         }
 
         function updateMypage() {
             const empty = document.getElementById('sub-empty');
             const active = document.getElementById('sub-active');
+
+            // 누적 결제 금액(실제는 마지막 결제 금액)
+            const totalPaidEl = document.getElementById('total-paid');
+            if (totalPaidEl) totalPaidEl.innerText = formatWon(displayPaid);
             
             if(isSubscribed) {
                 empty.classList.add('hidden');
@@ -420,13 +541,15 @@
                 
                 const nameEl = document.getElementById('display-plan-name');
                 const priceEl = document.getElementById('display-plan-price');
+
+                const addonText = addonSelected ? " + 옵션(1,500원)" : "";
                 
                 if(currentOption === 2) {
                     nameEl.innerText = "자동 연장 정기 구독";
-                    priceEl.innerText = "다음 결제 예정일: 2026년 01월 22일 (19,900원)";
+                    priceEl.innerText = "다음 결제 예정일: 2026년 01월 22일 (19,900원" + addonText + ")";
                 } else if(currentOption === 3) {
                     nameEl.innerText = "연간 구독 멤버십";
-                    priceEl.innerText = "이용 기간: 2025.12.22 ~ 2026.12.21 (결제 완료)";
+                    priceEl.innerText = "이용 기간: 2025.12.22 ~ 2026.12.21 (결제 완료" + addonText + ")";
                 }
             } else {
                 empty.classList.remove('hidden');
@@ -448,6 +571,10 @@
         function confirmAction() {
             if(pendingAction === 'cancel') {
                 isSubscribed = false;
+
+                // 해지 후 누적 결제 금액 표시를 0원으로 리셋(다른 사이트와 동일 원리)
+                displayPaid = 0;
+
                 closeDialog();
                 showToast("해지가 정상적으로 완료되었습니다.");
                 updateMypage();
